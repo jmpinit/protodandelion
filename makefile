@@ -12,11 +12,11 @@ BINDIR := bin
 
 SOURCES =	main.c \
 			
-INCLUDES = -Isrc$(S)inc
+INCLUDES = -Isrc$(S)inc -I/usr/local/include -I/usr/include/lua5.1
 OBJECTS = $(patsubst %,$(OBJDIR)$(S)%,$(SOURCES:.c=.o))
 
 CFLAGS := -Wall -pedantic -std=c99 -g -Os -gstabs
-LFLAGS = `sdl-config --libs` -lSDL
+LFLAGS = `sdl-config --libs` -lSDL -L/usr/local/lib -llacewing -llua5.1
 CC := gcc
 
 all: $(PROG)
