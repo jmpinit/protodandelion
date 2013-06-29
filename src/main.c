@@ -11,6 +11,8 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#include "satellite.h"
+
 SDL_Surface *screen;
 
 void cleanup() {
@@ -37,24 +39,6 @@ void SDL_init() {
 	atexit(cleanup);
 }
 
-SDL_Surface* sprites[2];
-
-void load_sprite(const char* file, unsigned int index) {
-	SDL_Surface *temp = SDL_LoadBMP(file);
-	if (temp == NULL) {
-		printf("Unable to load bitmap: %s\n", SDL_GetError());
-		exit(0);
-	}
-	sprites[index] = SDL_DisplayFormat(temp);
-	SDL_FreeSurface(temp);
-}
-
-void load_sprites() {
-	load_sprite("res/base.bmp"		, 0);
-	load_sprite("res/mainframe.bmp"	, 1);
-	load_sprite("res/solar.bmp"		, 2);
-	load_sprite("res/wide_dish.bmp"	, 3);
-}
 
 static void openlualibs(lua_State *l)
 {
@@ -101,21 +85,21 @@ int main() {
 	lua_close(l);
 
 	SDL_init();
-	load_sprites();
+	sat_init();
 
 	SDL_Rect src, dest;
 	 
 	src.x = 0;
 	src.y = 0;
-	src.w = sprites[0]->w;
-	src.h = sprites[0]->h;
+	src.w = sat_sprites[0]->w;
+	src.h = sat_sprites[0]->h;
 	 
 	dest.x = 100;
 	dest.y = 100;
-	dest.w = sprites[0]->w;
-	dest.h = sprites[0]->h;
+	dest.w = sat_sprites[0]->w;
+	dest.h = sat_sprites[0]->h;
 	 
-	SDL_BlitSurface(sprites[0], &src, screen, &dest);
+	SDL_BlitSurface(sat_sprites[0], &src, screen, &dest);
 	SDL_Flip(screen);
 
 	while(true) {
@@ -131,7 +115,7 @@ int main() {
 					switch (event.key.keysym.sym) {
 						case SDLK_RIGHT:
 							dest.x++;
-							SDL_BlitSurface(sprites[0], &src, screen, &dest);
+							SDL_BlitSurface(sat_sprites[0], &src, screen, &dest);
 							SDL_Flip(screen);
 							break;
 						case SDLK_UP:

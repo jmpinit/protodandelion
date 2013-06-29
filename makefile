@@ -11,6 +11,7 @@ OBJDIR := obj
 BINDIR := bin
 
 SOURCES =	main.c \
+			satellite.c
 			
 INCLUDES = -Isrc$(S)inc -I/usr/local/include -I/usr/include/lua5.1
 OBJECTS = $(patsubst %,$(OBJDIR)$(S)%,$(SOURCES:.c=.o))
