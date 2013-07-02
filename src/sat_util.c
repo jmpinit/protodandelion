@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-#include "satellite.h"
+#include "sat.h"
 #include "sat_util.h"
 
 int rot_x_pt(Pt* p, Rot r) {

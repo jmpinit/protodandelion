@@ -6,16 +6,17 @@
 #include "SDL/SDL.h"
 //#include "SDL/SDL_thread.h"
 
-/* Include the Lua API header files. */
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
 
-#include "satellite.h"
+#include "sat.h"
 
-SDL_Surface *screen;
+lua_State* lstate;
+SDL_Surface* screen;
 
 void cleanup() {
+	lua_close(lstate);
 	SDL_Quit();
 }
 
@@ -39,7 +40,6 @@ void SDL_init() {
 	atexit(cleanup);
 }
 
-
 static void openlualibs(lua_State *l)
 {
 	static const luaL_reg lualibs[] =
@@ -50,56 +50,45 @@ static void openlualibs(lua_State *l)
 
 	const luaL_reg *lib;
 
-	for (lib = lualibs; lib->func != NULL; lib++)
-	{
+	for (lib = lualibs; lib->func != NULL; lib++) {
 		lib->func(l);
 		lua_settop(l, 0);
 	}
 }
 
-int lua_test_callback(lua_State* lua)
-{
-	if (lua_gettop(lua) == 1 && // make sure exactly one argument is passed
-			lua_isfunction(lua, -1)) // and that argument (which is on top of the stack) is a function
-	{
-		lua_pushnumber(lua, 3); // push first argument to the function
-		lua_pcall(lua, 1, 0, 0); // call a function with one argument and no return values
-	}
-	return 0; // no values are returned from this function
-}
-
-int main() {
-	lua_State *l;
-	l = lua_open();
-	openlualibs(l);
-
-	int s = luaL_loadfile(l, "src/scripts/test.lua");
-	if ( s==0 ) {
-		s = lua_pcall(l, 0, LUA_MULTRET, 0);
-		printf("Called script.");
-	} else {
-		printf("Couldn't load script");
-	}
-
-	/* Remember to destroy the Lua State */
-	lua_close(l);
-
-	SDL_init();
-	sat_init();
-
+/*void draw_stuff(int x, int y, Satellite* sat) {
 	SDL_Rect src, dest;
 	 
 	src.x = 0;
 	src.y = 0;
-	src.w = sat_sprites[0]->w;
-	src.h = sat_sprites[0]->h;
-	 
-	dest.x = 100;
-	dest.y = 100;
-	dest.w = sat_sprites[0]->w;
-	dest.h = sat_sprites[0]->h;
-	 
-	SDL_BlitSurface(sat_sprites[0], &src, screen, &dest);
+
+	for(int dy = 0; dy < SAT_HEIGHT; dy++) {
+		for(int dx = 0; dx < SAT_WIDTH; dx++) {
+			int index = sat->parts[dy*SAT_WIDTH+dx];
+			printf("%d\n", index);
+			SDL_Surface* sprite = sat_parts[index]->sprite;
+			src.w = sprite->w;
+			src.h = sprite->h;
+			 
+			dest.x = x + dx*8;
+			dest.y = y + dy*8;
+			dest.w = src.w;
+			dest.h = src.h;
+			 
+			SDL_BlitSurface(sprite, &src, screen, &dest);
+		}
+	}
+}*/
+
+int main() {
+	lstate = lua_open();
+	openlualibs(lstate);
+
+	SDL_init();
+	sat_init(lstate);
+
+	//sat_render(satellites[0], screen);
+
 	SDL_Flip(screen);
 
 	while(true) {
@@ -114,9 +103,6 @@ int main() {
 				case SDL_KEYDOWN:
 					switch (event.key.keysym.sym) {
 						case SDLK_RIGHT:
-							dest.x++;
-							SDL_BlitSurface(sat_sprites[0], &src, screen, &dest);
-							SDL_Flip(screen);
 							break;
 						case SDLK_UP:
 							break;

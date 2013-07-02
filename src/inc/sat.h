@@ -1,6 +1,10 @@
 #ifndef SAT_H
 #define SAT_H
 
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+
 #define SAT_TILE_WIDTH	8
 #define SAT_TILE_HEIGHT	8
 
@@ -61,7 +65,7 @@ struct Satellite {
 };
 
 void sat_render(struct Satellite* sat, struct SDL_Surface* canvas);
-void sat_init(void);
+void sat_init(lua_State* l);
 
 extern struct SatPartInfo* sat_parts[SAT_N_PARTS];
 extern struct Satellite* satellites[4];
