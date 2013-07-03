@@ -18,15 +18,15 @@
 int satlib_part_type_new(lua_State *L) {
 	if(lua_type(L, 1) == LUA_TSTRING) {
 		// == get args ==
-		const char* tempName = lua_tostring(L, 1);
+		const char* name = lua_tostring(L, 1);
 
 		// == create part ==
 
-		struct SatPartInfo* part = calloc(1, sizeof(struct SatPartInfo));
+		SatPartInfo* part = calloc(1, sizeof(SatPartInfo));
 
 		// save the name
-		part->name = calloc(strlen(tempName), sizeof(char));
-		strcpy(part->name, tempName);
+		part->name = calloc(strlen(name), sizeof(char));
+		strcpy(part->name, name);
 
 		// setup sprite array
 		part->sprites = calloc(4, sizeof(SDL_Surface*));
@@ -48,11 +48,14 @@ int satlib_part_type_add_sprite(lua_State *L) {
 		const char* filename = lua_tostring(L, 2);
 		Rot rot = (Rot)lua_tonumber(L, 3);
 
+		// fail if the rotation is out of bounds
+		if(rot < 0 || rot >= 4)
+			return luaL_error(L, "%s: rotation of %d is out of bounds.", __func__, rot);
+
 		// get the part info or return failure
-		struct SatPartInfo* partinfo = info_by_name((char*)name);
-		if(partinfo == NULL) {
+		SatPartInfo* partinfo = info_by_name((char*)name);
+		if(partinfo == NULL)
 			return luaL_error(L, "%s: no part named %s.", __func__, name);
-		}
 
 		// load the image
 		SDL_Surface* temp = SDL_LoadBMP(filename);
@@ -69,6 +72,8 @@ int satlib_part_type_add_sprite(lua_State *L) {
 			partinfo->w = partinfo->sprites[rot]->w / SAT_TILE_WIDTH;
 			partinfo->h = partinfo->sprites[rot]->h / SAT_TILE_HEIGHT;
 		}
+
+		printf("added sprite to %s at %d degrees\n", name, rot*90);
 	} else {
 		return luaL_error(L, "%s: argument should be name, filename, rotation index.", __func__);
 	}
@@ -92,7 +97,7 @@ int satlib_part_type_set_connector(lua_State *L) {
 		int dir = (int)lua_tonumber(L, 5);
 
 		// make sure part info exists
-		struct SatPartInfo* partinfo = info_by_name((char*)name);
+		SatPartInfo* partinfo = info_by_name((char*)name);
 		if(partinfo == NULL)
 			return luaL_error(L, "%s: no part named %s.", __func__, name);
 
@@ -123,14 +128,14 @@ int satlib_part_type_init_connectors(lua_State *L) {
 		unsigned char num = (unsigned char)lua_tonumber(L, 2);
 
 		// get part and return failure otherwise
-		struct SatPartInfo* partinfo = info_by_name((char*)name);
+		SatPartInfo* partinfo = info_by_name((char*)name);
 		if(partinfo == NULL)
 			return luaL_error(L, "%s: no part named %s.", __func__, name);
 
 		// create connectors
-		partinfo->connectors = calloc(num, sizeof(struct Connector*));
+		partinfo->connectors = calloc(num, sizeof(Connector*));
 		for(int i=0; i<num; i++)
-			partinfo->connectors[i] = calloc(1, sizeof(struct Connector));
+			partinfo->connectors[i] = calloc(1, sizeof(Connector));
 		partinfo->num_connectors = num;
 	} else {
 		return luaL_error(L, "%s: argument should be part name, number of connectors.", __func__);

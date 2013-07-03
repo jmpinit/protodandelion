@@ -12,20 +12,23 @@
 
 #include "satlib/construct.h"
 
-struct Satellite* currentSat = NULL;
-struct SatPart* currentPart = NULL;
-struct SatPart* lastPart = NULL;
+Satellite* currentSat = NULL;
+SatPart* currentPart = NULL;
+SatPart* lastPart = NULL;
 
 #define ARGS "(name, x, y)"
 int satlib_sat_new(lua_State *L) {
-	if(lua_type(L, 1) == LUA_TSTRING) {
+	if(	lua_type(L, 1) == LUA_TSTRING &&
+		lua_type(L, 2) == LUA_TNUMBER &&
+		lua_type(L, 3) == LUA_TNUMBER
+	) {
 		// get args
 		const char* name = lua_tostring(L, 1);
 		int x = (int)lua_tonumber(L, 2);
 		int y = (int)lua_tonumber(L, 3);
 
 		// construct the satellite
-		struct Satellite* newsat = calloc(1, sizeof(struct Satellite));
+		Satellite* newsat = calloc(1, sizeof(Satellite));
 
 		newsat->name = calloc(strlen(name), sizeof(char));
 		strcpy(newsat->name, name);
@@ -33,9 +36,9 @@ int satlib_sat_new(lua_State *L) {
 		newsat->x = x;
 		newsat->y = y;
 
-		struct SatPart* rootPart = calloc(1, sizeof(struct SatPart));
+		SatPart* rootPart = calloc(1, sizeof(SatPart));
 		rootPart->info = info_by_name("mainframe");
-		newsat->parts = calloc(1, sizeof(struct Node));
+		newsat->parts = calloc(1, sizeof(Node));
 		newsat->parts->data = rootPart;
 
 		// add the satellite
@@ -59,7 +62,7 @@ int satlib_sat_select(lua_State *L) {
 		const char* name = lua_tostring(L, 1);
 
 		// get satellite
-		struct Satellite* sat = sat_by_name((char*)name);
+		Satellite* sat = sat_by_name((char*)name);
 
 		if(sat == NULL) 
 			return luaL_error(L, "%s: there is no satellite named %s", __func__, name);
@@ -77,7 +80,7 @@ int satlib_sat_select(lua_State *L) {
 #define ARGS "none"
 int satlib_sat_part_last(lua_State *L) {
 	// update construction state
-	struct SatPart* swapPart = currentPart;
+	SatPart* swapPart = currentPart;
 	currentPart = lastPart;
 	lastPart = swapPart;
 
@@ -87,20 +90,23 @@ int satlib_sat_part_last(lua_State *L) {
 
 #define ARGS "(x, y, direction)"
 int satlib_sat_part_go(lua_State *L) {
-	if(lua_type(L, 1) == LUA_TSTRING) {
+	if(	lua_type(L, 1) == LUA_TNUMBER &&
+		lua_type(L, 2) == LUA_TNUMBER &&
+		lua_type(L, 3) == LUA_TNUMBER
+	) {
 		// get args
 		int x = lua_tonumber(L, 1);
 		int y = lua_tonumber(L, 2);
 		Dir dir = lua_tonumber(L, 3);
 
 		// get connector
-		struct Connector* conn = connector_by_sig(currentPart->info, x, y, dir);
+		Connector* conn = connector_by_sig(currentPart->info, x, y, dir);
 
 		// look for a part connected to currentPart by that connector
-		struct Node* current = currentSat->parts;
-		struct SatPart* candidate;
+		Node* current = currentSat->parts;
+		SatPart* candidate;
 		while(current != NULL) {
-			candidate = (struct SatPart*)current->data;
+			candidate = (SatPart*)current->data;
 			if(candidate->connection->parent == conn) break;
 			current = current->next;
 		}
@@ -122,7 +128,15 @@ int satlib_sat_part_go(lua_State *L) {
 
 #define ARGS "(part name, child x, child y, child direction, rotation, parent x, parent y, parent direction)"
 int satlib_sat_part_add(lua_State *L) {
-	if(lua_type(L, 1) == LUA_TSTRING) {
+	if(	lua_type(L, 1) == LUA_TSTRING &&
+		lua_type(L, 2) == LUA_TNUMBER &&
+		lua_type(L, 3) == LUA_TNUMBER &&
+		lua_type(L, 4) == LUA_TNUMBER &&
+		lua_type(L, 5) == LUA_TNUMBER &&
+		lua_type(L, 6) == LUA_TNUMBER &&
+		lua_type(L, 7) == LUA_TNUMBER &&
+		lua_type(L, 8) == LUA_TNUMBER
+	) {
 		// get args
 		const char* partName = lua_tostring(L, 1);
 		int cx = (int)lua_tonumber(L, 2);
@@ -135,10 +149,10 @@ int satlib_sat_part_add(lua_State *L) {
 		Dir pdir = (int)lua_tonumber(L, 8);
 
 		// create the new part
-		struct SatPartInfo* info = info_by_name((char*)partName);
-		struct Connector* connParent = connector_by_sig(currentPart->info, px, py, pdir);
-		struct Connector* connChild = connector_by_sig(info, cx, cy, cdir);
-		struct SatPart* newpart = sat_part_add(currentSat, info, currentPart, crot, connParent, connChild);
+		SatPartInfo* info = info_by_name((char*)partName);
+		Connector* connParent = connector_by_sig(currentPart->info, px, py, pdir);
+		Connector* connChild = connector_by_sig(info, cx, cy, cdir);
+		SatPart* newpart = sat_part_add(currentSat, info, currentPart, crot, connParent, connChild);
 
 		// update construction state
 		lastPart = currentPart;

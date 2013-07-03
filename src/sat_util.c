@@ -59,13 +59,13 @@ Pt sprite_raster(unsigned int w, unsigned int h, unsigned int index) {
 }
 
 // LIMIT: names must be less than 256 char long
-struct SatPartInfo* info_by_name(char* name) {
-	struct Node* last = sat_partinfos;
+SatPartInfo* info_by_name(char* name) {
+	Node* last = sat_partinfos;
 
 	while(last != NULL) {
-		char* nname = ((struct SatPartInfo*)last->data)->name;
+		char* nname = ((SatPartInfo*)last->data)->name;
 		if(strncmp(nname, name, 256) == 0)
-			return (struct SatPartInfo*)last->data;
+			return (SatPartInfo*)last->data;
 		last = last->next;
 	}
 
@@ -73,22 +73,22 @@ struct SatPartInfo* info_by_name(char* name) {
 }
 
 // LIMIT: names must be less than 256 char long
-struct Satellite* sat_by_name(char* name) {
-	struct Node* last = satellites;
+Satellite* sat_by_name(char* name) {
+	Node* last = satellites;
 
 	while(last != NULL) {
-		char* nname = ((struct Satellite*)last->data)->name;
+		char* nname = ((Satellite*)last->data)->name;
 		if(strncmp(nname, name, 256) == 0)
-			return (struct Satellite*)last->data;
+			return (Satellite*)last->data;
 		last = last->next;
 	}
 
 	return NULL;
 }
 
-struct Connector* connector_by_sig(struct SatPartInfo* info, int x, int y, Dir dir) {
+Connector* connector_by_sig(SatPartInfo* info, int x, int y, Dir dir) {
 	for(int i=0; i < info->num_connectors; i++) {
-		struct Connector* c = info->connectors[i];
+		Connector* c = info->connectors[i];
 		if(c->position.x == x && c->position.y == y && c->direction == dir) return c;
 	}
 

@@ -21,44 +21,44 @@ typedef enum {
 	LEFT, UP, RIGHT, DOWN
 } Dir;
 
-typedef struct {
+typedef struct Pt {
 	int x, y;
 } Pt;
 
-struct Connector {
+typedef struct Connector {
 	Pt position;
 	Dir direction;
-};
+} Connector;
 
-struct Connection {
-	struct Connector* child;
-	struct Connector* parent;
-};
+typedef struct Connection {
+	Connector* child;
+	Connector* parent;
+} Connection;
 
-struct SatPartInfo {
+typedef struct SatPartInfo {
 	char* name;
 	struct SDL_Surface** sprites;
 	unsigned int w;
 	unsigned int h;
-	struct Connector** connectors;
+	Connector** connectors;
 	unsigned int num_connectors;
-};
+} SatPartInfo;
 
-struct SatPart {
+typedef struct SatPart {
 	struct SatPart* parent;
-	struct SatPartInfo* info;		// info about type of part
-	struct Connection* connection;
+	SatPartInfo* info;		// info about type of part
+	Connection* connection;
 	Rot rotation;
-};
+} SatPart;
 
-struct Satellite {
+typedef struct Satellite {
 	char* name;
 	long x, y;
 	struct Node* parts; // node->data is SatPart*
-};
+} Satellite;
 
-void sat_render(struct Satellite* sat, struct SDL_Surface* canvas);
-struct SatPart* sat_part_add(struct Satellite* sat, struct SatPartInfo* type, struct SatPart* parent, Rot rot, struct Connector* connParent, struct Connector* connChild);
+void sat_render(Satellite* sat, struct SDL_Surface* canvas);
+SatPart* sat_part_add(Satellite* sat, SatPartInfo* type, SatPart* parent, Rot rot, Connector* connParent, Connector* connChild);
 void sat_init(lua_State* l);
 
 extern struct Node* satellites;		//node->data is Satellite*

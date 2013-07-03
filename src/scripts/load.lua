@@ -60,7 +60,7 @@ function part_new(arg1, arg2, arg3)
 
 	-- SPRITES
 	for rotation, filename in pairs(spritefiles) do
-		satlib.part_type_add_sprite(name, filename..".bmp", rotation)
+		satlib.part_type_add_sprite(name, filename..".bmp", rotation-1)
 	end
 
 	-- CONNECTIONS
@@ -68,7 +68,7 @@ function part_new(arg1, arg2, arg3)
 		satlib.part_type_init_connectors(name, #connectors);
 
 		for i, connection in pairs(connectors) do
-			satlib.part_type_set_connector(name, i-1, connection.x, connection.y, connection.direction)
+			satlib.part_type_set_connector(name, i-1, connection.x, connection.y, connection.dir)
 		end
 	end
 end
@@ -124,9 +124,10 @@ print("parts loaded.")
 
 -- CREATE A TEST SATELLITE
 
-satlib.sat_new("test")
+satlib.sat_new("test", 10, 10)
 satlib.sat_select("test")
-satlib.sat_part_add("mainframe", 0, 0, LEFT, D0, 0, 0, RIGHT)
+satlib.sat_part_add("base", 0, 0, LEFT, D0, 0, 0, RIGHT)
+satlib.sat_part_add("solar", 0, 0, LEFT, D0, 0, 0, RIGHT)
 
 --[[
 sat_new("test", {

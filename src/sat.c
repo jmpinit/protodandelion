@@ -14,10 +14,10 @@
 #include "sprite.h"
 #include "list.h"
 
-struct Node* sat_partinfos;
-struct Node* satellites;
+Node* sat_partinfos;
+Node* satellites;
 
-bool connection_is_valid(struct Connection* conn) {
+bool connection_is_valid(Connection* conn) {
 	bool valid = true;
 
 	// check for compatible directions
@@ -35,15 +35,15 @@ bool connection_is_valid(struct Connection* conn) {
 	return valid;
 }
 
-struct SatPart* sat_part_add(struct Satellite* sat, struct SatPartInfo* type, struct SatPart* parent, Rot rot, struct Connector* connParent, struct Connector* connChild) {
+SatPart* sat_part_add(Satellite* sat, SatPartInfo* type, SatPart* parent, Rot rot, Connector* connParent, Connector* connChild) {
 	// create the part
-	struct SatPart* part = calloc(1, sizeof(struct SatPart));
+	SatPart* part = calloc(1, sizeof(SatPart));
 
 	// set the part fields
 	part->parent = parent;
 	part->info = type;
 
-	part->connection = malloc(sizeof(struct Connection));
+	part->connection = malloc(sizeof(Connection));
 	part->connection->parent = connParent;
 	part->connection->child = connChild;
 
@@ -55,23 +55,24 @@ struct SatPart* sat_part_add(struct Satellite* sat, struct SatPartInfo* type, st
 	return part;
 }
 
-void sat_render(struct Satellite* sat, SDL_Surface* canvas) {
-	struct Node* current = sat->parts;
-	struct SatPart* part = (struct SatPart*)current->data;
+void sat_render(Satellite* sat, SDL_Surface* canvas) {
+	Node* current = sat->parts;
 
 	// render every part separately
 	while(current != NULL) {
+		SatPart* part = (SatPart*)current->data;
+
 		// calculate offset by following tree to root part
 		int dx = 0;
 		int dy = 0;
-		struct SatPart* child = part;
 
-		while(child != NULL) {
+		SatPart* child = part;
+		SatPart* parent = child->parent;
+
+		while(parent != NULL) {
 			// gather connection information
-			struct SatPart* parent = child->parent;
-
-			struct Connector* connChild = child->connection->child;
-			struct Connector* connParent = child->connection->parent;
+			Connector* connChild = child->connection->child;
+			Connector* connParent = child->connection->parent;
 
 			// offset based on connector location
 			dx += rot_x_pt(&connParent->position, parent->rotation) -
@@ -92,11 +93,12 @@ void sat_render(struct Satellite* sat, SDL_Surface* canvas) {
 			} else if(dc == RIGHT && dp == LEFT) {
 				dx -= 1;
 			} else {
-				printf("error: invalid connection.\n");
+				printf("error: invalid connection - %d to %d\n", dc, dp);
 				exit(0);
 			}
 
 			child = parent;
+			parent = child->parent;
 		}
 
 		// render sprite at offset
@@ -107,8 +109,8 @@ void sat_render(struct Satellite* sat, SDL_Surface* canvas) {
 }
 
 void sat_init(lua_State* L) {
-	sat_partinfos = calloc(1, sizeof(struct Node));
-	satellites = calloc(1, sizeof(struct Node));
+	sat_partinfos = calloc(1, sizeof(Node));
+	satellites = calloc(1, sizeof(Node));
 
 	// load the library
 	openlualibs(L);

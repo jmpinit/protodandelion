@@ -11,6 +11,7 @@
 #include <lualib.h>
 
 #include "sat.h"
+#include "list.h"
 
 lua_State* lstate;
 SDL_Surface* screen;
@@ -70,11 +71,15 @@ int main() {
 	SDL_init();
 	sat_init(lstate);
 
-	//sat_render(satellites[0], screen);
-
-	SDL_Flip(screen);
-
 	while(true) {
+		Node* rootsatnode = satellites;
+		Satellite* rootsat = (Satellite*)rootsatnode->data;
+
+		if(rootsat != NULL) {
+			sat_render(rootsat, screen);
+			SDL_Flip(screen);
+		}
+
 		SDL_Event event;
 
 		while(SDL_PollEvent(&event)) {
@@ -104,7 +109,7 @@ int main() {
 			}
 		}
 
-		SDL_Delay(16);
+		SDL_Delay(32);
 	}
 
 	return 0;

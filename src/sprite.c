@@ -1,7 +1,7 @@
 #include "sat.h"
 #include "SDL/SDL.h"
 
-void sprite_render(SDL_Surface* canvas, struct SatPart* part, int x, int y, Rot rot) {
+void sprite_render(SDL_Surface* canvas, SatPart* part, int x, int y, Rot rot) {
 	SDL_Surface* sprite = part->info->sprites[rot];
 
 	SDL_Rect src, dest;
