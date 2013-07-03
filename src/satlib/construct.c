@@ -33,8 +33,17 @@ int satlib_sat_new(lua_State *L) {
 		newsat->x = x;
 		newsat->y = y;
 
+		struct SatPart* rootPart = calloc(1, sizeof(struct SatPart));
+		rootPart->info = info_by_name("mainframe");
+		newsat->parts = calloc(1, sizeof(struct Node));
+		newsat->parts->data = rootPart;
+
 		// add the satellite
 		list_add(satellites, newsat);
+
+		// update construction state
+		currentSat = newsat;
+		currentPart = rootPart;
 	} else {
 		return luaL_error(L, "%s: argument should be %s", __func__, ARGS);
 	}

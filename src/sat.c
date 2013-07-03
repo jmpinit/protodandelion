@@ -108,6 +108,7 @@ void sat_render(struct Satellite* sat, SDL_Surface* canvas) {
 
 void sat_init(lua_State* L) {
 	sat_partinfos = calloc(1, sizeof(struct Node));
+	satellites = calloc(1, sizeof(struct Node));
 
 	// load the library
 	openlualibs(L);

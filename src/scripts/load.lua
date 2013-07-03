@@ -3,9 +3,12 @@
 -- require 'constants'
 
 LEFT	= 0
-TOP		= 1
+UP		= 1
 RIGHT	= 2
 DOWN	= 3
+
+TOP = UP
+BOTTOM = DOWN
 
 D0		= 0
 D90		= 1
@@ -70,6 +73,35 @@ function part_new(arg1, arg2, arg3)
 	end
 end
 
+-- recursively construct satellite
+function expand(structure, depth)
+	for key, value in pairs(structure) do
+		if(type(value) == "table") then
+			if(depth == nil) then
+				expand(value, 1)
+			else
+				expand(value, depth+1)
+			end
+		else
+			offset = ""
+			if(depth ~= nil) then
+				for i=0, depth do
+					offset = offset.."\t"
+				end
+			end
+
+			print(offset..value)
+		end
+	end
+end
+
+function sat_new(name, structure)
+	assert(type(name) == "string" and type(structure) == "table")
+	
+	satlib.sat_new(name)
+	expand(structure);
+end
+
 -- often used connection config for a single block
 conn_one = {
 	{ x = 0, y = 0, dir = LEFT },
@@ -78,6 +110,7 @@ conn_one = {
 	{ x = 0, y = 0, dir = DOWN }
 }
 
+-- CREATE PARTS
 part_new("base", conn_one)
 part_new("mainframe", conn_one)
 part_new("solar", {
@@ -89,3 +122,32 @@ part_new("wide dish", "dish_wide", {
 
 print("parts loaded.")
 
+-- CREATE A TEST SATELLITE
+
+satlib.sat_new("test")
+satlib.sat_select("test")
+satlib.sat_part_add("mainframe", 0, 0, LEFT, D0, 0, 0, RIGHT)
+
+--[[
+sat_new("test", {
+	type = "mainframe",
+	cdir = LEFT,
+	pdir = LEFT,
+	parts = {
+		{
+			type = "base",
+			cdir = LEFT,
+			pdir = RIGHT,
+			parts = {}
+		},
+		{
+			type = "base",
+			cdir = BOTTOM,
+			pdir = TOP,
+			parts = {}
+		}
+	}
+})
+--]]
+
+print("test satellite created.")
