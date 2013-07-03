@@ -14,7 +14,11 @@ SOURCES =	main.c \
 			sat.c \
 			sat_util.c \
 			sprite.c \
-			list.c
+			list.c \
+			satlib$(S)satlib.c \
+			satlib$(S)initialize.c \
+			satlib$(S)construct.c \
+			satlib$(S)utility.c \
 			
 INCLUDES = -Isrc$(S)inc -I/usr/local/include -I/usr/include/lua5.1
 OBJECTS = $(patsubst %,$(OBJDIR)$(S)%,$(SOURCES:.c=.o))

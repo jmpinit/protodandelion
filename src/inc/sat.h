@@ -21,14 +21,6 @@ typedef enum {
 	LEFT, UP, RIGHT, DOWN
 } Dir;
 
-typedef enum {
-	empty,
-	base,
-	mainframe,
-	solar,
-	dish_wide
-} SatPartID;
-
 typedef struct {
 	int x, y;
 } Pt;
@@ -36,6 +28,11 @@ typedef struct {
 struct Connector {
 	Pt position;
 	Dir direction;
+};
+
+struct Connection {
+	struct Connector* child;
+	struct Connector* parent;
 };
 
 struct SatPartInfo {
@@ -49,20 +46,22 @@ struct SatPartInfo {
 
 struct SatPart {
 	struct SatPart* parent;
-	SatPartID id;			// the type of part
-	int attachParent;	// where on parent to attach
-	int attachLocal;			// where on part to attach to parent
+	struct SatPartInfo* info;		// info about type of part
+	struct Connection* connection;
 	Rot rotation;
 };
 
 struct Satellite {
+	char* name;
 	long x, y;
 	struct Node* parts; // node->data is SatPart*
 };
 
 void sat_render(struct Satellite* sat, struct SDL_Surface* canvas);
+struct SatPart* sat_part_add(struct Satellite* sat, struct SatPartInfo* type, struct SatPart* parent, Rot rot, struct Connector* connParent, struct Connector* connChild);
 void sat_init(lua_State* l);
 
-extern struct Node* sat_partinfos; //node->data is SatPartInfo*
+extern struct Node* satellites;		//node->data is Satellite*
+extern struct Node* sat_partinfos;	//node->data is SatPartInfo*
 
 #endif

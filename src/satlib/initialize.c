@@ -1,55 +1,21 @@
-// TODO special sat_error function prints name of current function
-#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include <stdbool.h>
+
+#include "SDL/SDL.h"
 
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
 
-#define FAILURE 0
-#define SUCCESS 1
+#include "sat.h"
+#include "sat_util.h"
+#include "list.h"
 
-static int part_new(lua_State *L);
-static int part_add_sprite(lua_State *L);
-static int part_set_connector(lua_State *L);
-static int part_init_connectors(lua_State *L);
-static int file_exists(lua_State *L);
-
-static const luaL_reg satlib[] =
-{
-	{ "part_new",				part_new },
-	{ "part_add_sprite",		part_add_sprite },
-	{ "part_init_connectors",	part_init_connectors },
-	{ "part_set_connector",		part_set_connector },
-	{ "file_exists",			file_exists },
-	{ NULL,						NULL }
-};
-
-int luaopen_satlib(lua_State *L) {
-	luaL_openlib(L, "satlib", satlib, 0);
-	return 1;
-}
-
-static void openlualibs(lua_State *l) {
-	static const luaL_reg lualibs[] =
-	{
-		{ "base",       luaopen_base },
-		{ "satlib",		luaopen_satlib },
-		{ NULL,         NULL }
-	};
-
-	const luaL_reg *lib;
-
-	for (lib = lualibs; lib->func != NULL; lib++) {
-		lib->func(l);
-		lua_settop(l, 0);
-	}
-}
-
-// LIBRARY
+#include "satlib/initialize.h"
 
 // (name)
-static int part_new(lua_State *L) {
+int satlib_part_type_new(lua_State *L) {
 	if(lua_type(L, 1) == LUA_TSTRING) {
 		// == get args ==
 		const char* tempName = lua_tostring(L, 1);
@@ -59,9 +25,8 @@ static int part_new(lua_State *L) {
 		struct SatPartInfo* part = calloc(1, sizeof(struct SatPartInfo));
 
 		// save the name
-		char* name = calloc(strlen(tempName), sizeof(char));
-		strcpy(name, tempName);
-		part->name = name;
+		part->name = calloc(strlen(tempName), sizeof(char));
+		strcpy(part->name, tempName);
 
 		// setup sprite array
 		part->sprites = calloc(4, sizeof(SDL_Surface*));
@@ -76,7 +41,7 @@ static int part_new(lua_State *L) {
 }
 
 // (name, filename, rotation index
-static int part_add_sprite(lua_State *L) {
+int satlib_part_type_add_sprite(lua_State *L) {
 	if(lua_type(L, 1) == LUA_TSTRING && lua_type(L, 2) == LUA_TSTRING && lua_type(L, 3) == LUA_TNUMBER) {
 		// get args
 		const char* name = lua_tostring(L, 1);
@@ -113,7 +78,7 @@ static int part_add_sprite(lua_State *L) {
 
 // (name, index, x, y, rot)
 // WARN: assumes empty connectors already set up
-static int part_set_connector(lua_State *L) {
+int satlib_part_type_set_connector(lua_State *L) {
 	if(	lua_type(L, 1) == LUA_TSTRING &&
 		lua_type(L, 2) == LUA_TNUMBER &&
   		lua_type(L, 3) == LUA_TNUMBER &&
@@ -149,7 +114,7 @@ static int part_set_connector(lua_State *L) {
 // (name, num)
 // WARN: assumes empty connector already set up
 // LIMIT: 256 connector
-static int part_init_connectors(lua_State *L) {
+int satlib_part_type_init_connectors(lua_State *L) {
 	if(	lua_type(L, 1) == LUA_TSTRING &&
 		lua_type(L, 2) == LUA_TNUMBER
 	) {
@@ -173,47 +138,3 @@ static int part_init_connectors(lua_State *L) {
 
 	return 0;
 }
-
-// (filename)
-static int file_exists(lua_State *L) {
-	if(	lua_type(L, 1) == LUA_TSTRING) {
-		// get args
-		const char* filename = lua_tostring(L, 1);
-
-		FILE* file = fopen(filename, "r");
-		if(file != NULL) {
-			fclose(file);
-			lua_pushboolean(L, true);
-			return 1;
-		}
-
-		lua_pushnumber(L, false);
-		return 1;
-	} else {
-		return luaL_error(L, "%s: argument should be filename.", __func__);
-	}
-}
-
-/* HOW TO LOAD AN IMAGE FILE
-		struct SatPartInfo* part = sat_parts[partID];
-		if(part == NULL) {
-			part = calloc(1, sizeof(struct SatPartInfo));
-			sat_parts[partID] = part;
-			part->sprites = calloc(4, sizeof(SDL_Surface*));
-		}
-
-		SDL_Surface* temp = SDL_LoadBMP(file);
-		if (temp == NULL) {
-			printf("Unable to load bitmap: %s\n", SDL_GetError());
-			exit(0);
-		}
-
-		part->sprites[rot] = SDL_DisplayFormat(temp);
-		SDL_FreeSurface(temp);
-
-		// the unrotated sprite determines the width and height
-		if(rot == D0) {
-			part->w = part->sprites[rot]->w / SAT_TILE_WIDTH;
-			part->h = part->sprites[rot]->h / SAT_TILE_HEIGHT;
-		}
-*/

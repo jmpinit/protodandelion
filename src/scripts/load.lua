@@ -53,19 +53,19 @@ function part_new(arg1, arg2, arg3)
 	end
 
 	-- PART
-	satlib.part_new(name)
+	satlib.part_type_new(name)
 
 	-- SPRITES
 	for rotation, filename in pairs(spritefiles) do
-		satlib.part_add_sprite(name, filename..".bmp", rotation)
+		satlib.part_type_add_sprite(name, filename..".bmp", rotation)
 	end
 
 	-- CONNECTIONS
 	if(#connectors > 0) then
-		satlib.part_init_connectors(name, #connectors);
+		satlib.part_type_init_connectors(name, #connectors);
 
 		for i, connection in pairs(connectors) do
-			satlib.part_set_connector(name, i-1, connection.x, connection.y, connection.direction)
+			satlib.part_type_set_connector(name, i-1, connection.x, connection.y, connection.direction)
 		end
 	end
 end

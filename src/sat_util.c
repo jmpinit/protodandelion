@@ -72,6 +72,29 @@ struct SatPartInfo* info_by_name(char* name) {
 	return NULL;
 }
 
+// LIMIT: names must be less than 256 char long
+struct Satellite* sat_by_name(char* name) {
+	struct Node* last = satellites;
+
+	while(last != NULL) {
+		char* nname = ((struct Satellite*)last->data)->name;
+		if(strncmp(nname, name, 256) == 0)
+			return (struct Satellite*)last->data;
+		last = last->next;
+	}
+
+	return NULL;
+}
+
+struct Connector* connector_by_sig(struct SatPartInfo* info, int x, int y, Dir dir) {
+	for(int i=0; i < info->num_connectors; i++) {
+		struct Connector* c = info->connectors[i];
+		if(c->position.x == x && c->position.y == y && c->direction == dir) return c;
+	}
+
+	return NULL;
+}
+
 // adds a part to the end of the linked list of all parts for the sat
 /*
 void append_part(struct Satellite* sat, struct SatPart* part) {

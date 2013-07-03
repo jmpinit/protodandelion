@@ -1,8 +1,8 @@
 #include "sat.h"
 #include "SDL/SDL.h"
 
-/*void sprite_render(SDL_Surface* canvas, SatPartID part, int x, int y, Rot rot) {
-	SDL_Surface* sprite = sat_parts[part]->sprites[rot];
+void sprite_render(SDL_Surface* canvas, struct SatPart* part, int x, int y, Rot rot) {
+	SDL_Surface* sprite = part->info->sprites[rot];
 
 	SDL_Rect src, dest;
 
@@ -18,16 +18,16 @@
 			corr.y = 0;
 			break;
 		case D90:
-			corr.x = -(sat_parts[part]->h-1);
+			corr.x = -(part->info->h-1);
 			corr.y = 0;
 			break;
 		case D180:
-			corr.x = -(sat_parts[part]->w-1);
-			corr.y = -(sat_parts[part]->h-1);
+			corr.x = -(part->info->w-1);
+			corr.y = -(part->info->h-1);
 			break;
 		case D270:
 			corr.x = 0;
-			corr.y = -(sat_parts[part]->w-1);
+			corr.y = -(part->info->w-1);
 			break;
 	}
 
@@ -37,5 +37,5 @@
 	dest.h = src.h;
 
 	SDL_BlitSurface(sprite, &src, canvas, &dest);
-}*/
+}
 
