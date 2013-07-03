@@ -1,7 +1,7 @@
 #include "sat.h"
 #include "SDL/SDL.h"
 
-void sprite_render(SDL_Surface* canvas, SatPartID part, int x, int y, Rot rot) {
+/*void sprite_render(SDL_Surface* canvas, SatPartID part, int x, int y, Rot rot) {
 	SDL_Surface* sprite = sat_parts[part]->sprites[rot];
 
 	SDL_Rect src, dest;
@@ -37,5 +37,5 @@ void sprite_render(SDL_Surface* canvas, SatPartID part, int x, int y, Rot rot) {
 	dest.h = src.h;
 
 	SDL_BlitSurface(sprite, &src, canvas, &dest);
-}
+}*/
 

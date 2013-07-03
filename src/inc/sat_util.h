@@ -5,5 +5,6 @@ int rot_y_pt(Pt* p, Rot r);
 
 Pt sprite_raster(unsigned int x, unsigned int y, unsigned int index);
 
+struct SatPartInfo* info_by_name(char* name);
 void append_part(struct Satellite* sat, struct SatPart* part);
 struct SatPart* get_last_part(struct Satellite* sat);

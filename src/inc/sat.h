@@ -39,6 +39,7 @@ struct Connector {
 };
 
 struct SatPartInfo {
+	char* name;
 	struct SDL_Surface** sprites;
 	unsigned int w;
 	unsigned int h;
@@ -54,20 +55,14 @@ struct SatPart {
 	Rot rotation;
 };
 
-struct SatPartNode {
-	struct SatPart* part;
-	struct SatPartNode* next;
-};
-
 struct Satellite {
 	long x, y;
-	struct SatPartNode* first_part;
+	struct Node* parts; // node->data is SatPart*
 };
 
 void sat_render(struct Satellite* sat, struct SDL_Surface* canvas);
 void sat_init(lua_State* l);
 
-extern struct SatPartInfo* sat_parts[SAT_N_PARTS];
-extern struct Satellite* satellites[4];
+extern struct Node* sat_partinfos; //node->data is SatPartInfo*
 
 #endif

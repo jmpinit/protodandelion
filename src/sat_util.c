@@ -1,6 +1,8 @@
+#include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "list.h"
 #include "sat.h"
 #include "sat_util.h"
 
@@ -56,7 +58,22 @@ Pt sprite_raster(unsigned int w, unsigned int h, unsigned int index) {
 	return (Pt){ x, y };
 }
 
+// LIMIT: names must be less than 256 char long
+struct SatPartInfo* info_by_name(char* name) {
+	struct Node* last = sat_partinfos;
+
+	while(last != NULL) {
+		char* nname = ((struct SatPartInfo*)last->data)->name;
+		if(strncmp(nname, name, 256) == 0)
+			return (struct SatPartInfo*)last->data;
+		last = last->next;
+	}
+
+	return NULL;
+}
+
 // adds a part to the end of the linked list of all parts for the sat
+/*
 void append_part(struct Satellite* sat, struct SatPart* part) {
 	struct SatPartNode* last = sat->first_part;
 	
@@ -83,4 +100,4 @@ struct SatPart* get_last_part(struct Satellite* sat) {
 		last = last->next;
 
 	return last->part;
-}
+}*/

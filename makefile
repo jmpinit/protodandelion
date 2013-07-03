@@ -13,7 +13,8 @@ BINDIR := bin
 SOURCES =	main.c \
 			sat.c \
 			sat_util.c \
-			sprite.c
+			sprite.c \
+			list.c
 			
 INCLUDES = -Isrc$(S)inc -I/usr/local/include -I/usr/include/lua5.1
 OBJECTS = $(patsubst %,$(OBJDIR)$(S)%,$(SOURCES:.c=.o))

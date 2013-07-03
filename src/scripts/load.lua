@@ -1,56 +1,91 @@
 #!/usr/bin/lua
 
+-- require 'constants'
+
+LEFT	= 0
+TOP		= 1
+RIGHT	= 2
+DOWN	= 3
+
+D0		= 0
+D90		= 1
+D180	= 2
+D270	= 3
+
 -- TODO set the connectors
 -- TODO wrap repeated code in nice utility functions
 
-satlib.load_sprite("res/empty.bmp", 0, satlib.d0)
-satlib.load_sprite("res/empty.bmp", 0, satlib.d90)
-satlib.load_sprite("res/empty.bmp", 0, satlib.d180)
-satlib.load_sprite("res/empty.bmp", 0, satlib.d270)
-print("loaded empty sprite.")
+function part_new(arg1, arg2, arg3)
+	local name, filename, connectors
+	local spritefiles
 
-satlib.load_sprite("res/base.bmp", 1, satlib.d0)
-satlib.load_sprite("res/base.bmp", 1, satlib.d90)
-satlib.load_sprite("res/base.bmp", 1, satlib.d180)
-satlib.load_sprite("res/base.bmp", 1, satlib.d270)
-print("loaded base sprite.")
+	if(arg1 and arg2 and arg3) then
+		assert(type(arg1) == "string" and type(arg2) == "string" and type(arg3) == "table")
 
---[[
-		temp->connectors[0]->direction = LEFT
-		temp->connectors[1]->direction = UP
-		temp->connectors[2]->direction = RIGHT
-		temp->connectors[3]->direction = DOWN
---]]
+		name = arg1
+		filestub = "res/" .. arg2
+		connectors = arg3
+	else
+		assert(type(arg1) == "string" and type(arg2) == "table")
 
-satlib.load_sprite("res/mainframe.bmp", 2, satlib.d0)
-satlib.load_sprite("res/mainframe.bmp", 2, satlib.d90)
-satlib.load_sprite("res/mainframe.bmp", 2, satlib.d180)
-satlib.load_sprite("res/mainframe.bmp", 2, satlib.d270)
-print("loaded mainframe sprite.")
+		name = arg1
+		filestub = "res/" .. arg1
+		connectors = arg2
+	end
 
---[[
-		temp->connectors[0]->direction = LEFT
-		temp->connectors[1]->direction = UP
-		temp->connectors[2]->direction = RIGHT
-		temp->connectors[3]->direction = DOWN
---]]
+	-- SPRITE FILENAMES
+	if(satlib.file_exists(filestub .. ".bmp") == true) then
+		-- only one
+		spritefiles = {
+			filestub,
+			filestub,
+			filestub,
+			filestub,
+		}
+	else
+		-- one for every 90 degrees
+		spritefiles = {
+			filestub .. "_0",
+			filestub .. "_90",
+			filestub .. "_180",
+			filestub .. "_270",
+		}
+	end
 
-satlib.load_sprite("res/solar_0.bmp",	3, satlib.d0)
-satlib.load_sprite("res/solar_90.bmp",	3, satlib.d90)
-satlib.load_sprite("res/solar_180.bmp",	3, satlib.d180)
-satlib.load_sprite("res/solar_270.bmp",	3, satlib.d270)
-print("loaded solar sprite.")
+	-- PART
+	satlib.part_new(name)
 
---		temp->connectors[0]->direction = LEFT
+	-- SPRITES
+	for rotation, filename in pairs(spritefiles) do
+		satlib.part_add_sprite(name, filename..".bmp", rotation)
+	end
 
-satlib.load_sprite("res/dish_wide_0.bmp",	4, satlib.d0)
-satlib.load_sprite("res/dish_wide_90.bmp",	4, satlib.d90)
-satlib.load_sprite("res/dish_wide_180.bmp",	4, satlib.d180)
-satlib.load_sprite("res/dish_wide_270.bmp",	4, satlib.d270)
-print("loaded dish_wide sprite.")
+	-- CONNECTIONS
+	if(#connectors > 0) then
+		satlib.part_init_connectors(name, #connectors);
 
---[[
-		temp->connectors[0]->position.x = 0
-		temp->connectors[0]->position.y = 1
-		temp->connectors[0]->direction = LEFT
---]]
+		for i, connection in pairs(connectors) do
+			satlib.part_set_connector(name, i-1, connection.x, connection.y, connection.direction)
+		end
+	end
+end
+
+-- often used connection config for a single block
+conn_one = {
+	{ x = 0, y = 0, dir = LEFT },
+	{ x = 0, y = 0, dir = TOP },
+	{ x = 0, y = 0, dir = RIGHT },
+	{ x = 0, y = 0, dir = DOWN }
+}
+
+part_new("base", conn_one)
+part_new("mainframe", conn_one)
+part_new("solar", {
+	{ x = 0, y = 0, dir = LEFT }
+})
+part_new("wide dish", "dish_wide", {
+	{ x = 0, y = 1, dir = LEFT }
+})
+
+print("parts loaded.")
+

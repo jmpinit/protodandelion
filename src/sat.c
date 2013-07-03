@@ -1,22 +1,21 @@
 #include "SDL/SDL.h"
 
 #include "sat.h"
+#include "sat_util.h"
+#include "list.h"
 
-struct SatPartInfo* sat_parts[SAT_N_PARTS];
-struct Satellite* satellites[4];
+struct Node* sat_partinfos;
 
 #include "sat_lua.c"
 
 void sat_render(struct Satellite* sat, SDL_Surface* canvas) {
-	struct SatPartNode* last = sat->first_part;
-	while(last->next != NULL) {
-		last = last->next;
-	}
 }
 
 void sat_init(lua_State* L) {
+	sat_partinfos = calloc(1, sizeof(struct Node));
+
 	// load the library
-	luaopen_satlib(L);
+	openlualibs(L);
 
 	// run the load script
 	const char* startup = "src/scripts/load.lua";
@@ -27,7 +26,7 @@ void sat_init(lua_State* L) {
 		if(s) fprintf(stderr, "Lua error: %s\n", lua_tostring(L, -1));
 		printf("Called script.");
 	} else {
-		printf("Couldn't load sprite load script (%s).", startup);
+		fprintf(stderr, "Lua load error: %s\n", lua_tostring(L, -1));
 		exit(0);
 	}
 }

@@ -40,22 +40,6 @@ void SDL_init() {
 	atexit(cleanup);
 }
 
-static void openlualibs(lua_State *l)
-{
-	static const luaL_reg lualibs[] =
-	{
-		{ "base",       luaopen_base },
-		{ NULL,         NULL }
-	};
-
-	const luaL_reg *lib;
-
-	for (lib = lualibs; lib->func != NULL; lib++) {
-		lib->func(l);
-		lua_settop(l, 0);
-	}
-}
-
 /*void draw_stuff(int x, int y, Satellite* sat) {
 	SDL_Rect src, dest;
 	 
@@ -82,7 +66,6 @@ static void openlualibs(lua_State *l)
 
 int main() {
 	lstate = lua_open();
-	openlualibs(lstate);
 
 	SDL_init();
 	sat_init(lstate);
