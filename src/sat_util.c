@@ -6,6 +6,28 @@
 #include "sat.h"
 #include "sat_util.h"
 
+bool compatible_directions(Dir a, Dir b) {
+	bool valid = true;
+
+	if(a == UP && b == DOWN) {
+	} else if(a == DOWN && b == UP) {
+	} else if(a == LEFT && b == RIGHT) {
+	} else if(a == RIGHT && b == LEFT) {
+	} else {
+		valid = false;
+	}
+
+	return valid;
+}
+
+bool connectable(Connector* a, Rot rotA, Connector* b, Rot rotB) {
+	return compatible_directions((a->direction + rotA)%4, (b->direction + rotB)%4);
+}
+
+bool connection_is_valid(Connection* conn, Rot a, Rot b) {
+	return compatible_directions((conn->child->direction + a)%4, (conn->parent->direction + b)%4);
+}
+
 int rot_x_pt(Pt* p, Rot r) {
 	return rot_x(p->x, p->y, r);
 }

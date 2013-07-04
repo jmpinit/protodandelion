@@ -152,6 +152,13 @@ int satlib_sat_part_add(lua_State *L) {
 		SatPartInfo* info = info_by_name((char*)partName);
 		Connector* connParent = connector_by_sig(currentPart->info, px, py, pdir);
 		Connector* connChild = connector_by_sig(info, cx, cy, cdir);
+
+		if(connParent == NULL || connChild == NULL)
+			return luaL_error(L, "%s: connector(s) do(es) not exist.", __func__);
+
+		if(!connectable(connParent, currentPart->rotation, connChild, crot))
+			return luaL_error(L, "%s: incompatible directions.", __func__);
+
 		SatPart* newpart = sat_part_add(currentSat, info, currentPart, crot, connParent, connChild);
 
 		// update construction state

@@ -1,6 +1,12 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <stdbool.h>
+
+bool compatible_directions(Dir a, Dir b);
+bool connection_is_valid(Connection* conn, Rot a, Rot b);
+bool connectable(Connector* a, Rot rotA, Connector* b, Rot rotB);
+
 int rot_x(int x, int y, Rot r);
 int rot_y(int x, int y, Rot r);
 int rot_x_pt(Pt* p, Rot r);

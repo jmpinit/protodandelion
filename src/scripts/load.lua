@@ -124,10 +124,118 @@ print("parts loaded.")
 
 -- CREATE A TEST SATELLITE
 
-satlib.sat_new("test", 10, 10)
+satlib.sat_new("test", 25, 15)
 satlib.sat_select("test")
-satlib.sat_part_add("base", 0, 0, LEFT, D0, 0, 0, RIGHT)
-satlib.sat_part_add("solar", 0, 0, LEFT, D0, 0, 0, RIGHT)
+
+function staircase()
+	for i=1, 10 do
+		for i=1, 3 do
+			satlib.sat_part_add("base", 0, 0, LEFT, D0, 0, 0, RIGHT)
+		end
+
+		satlib.sat_part_add("solar", 0, 0, LEFT, D0, 0, 0, RIGHT)
+		satlib.sat_part_last()
+		satlib.sat_part_add("base", 0, 0, TOP, D0, 0, 0, BOTTOM)
+		satlib.sat_part_add("base", 0, 0, TOP, D0, 0, 0, BOTTOM)
+	end
+end
+
+function lineSat(dx, dy)
+	if(dx ~= 0) then
+		if(dx < 0) then
+			for i=1, -dx do
+				satlib.sat_part_add("base", 0, 0, RIGHT, D0, 0, 0, LEFT)
+			end
+
+			satlib.sat_part_add("solar", 0, 0, LEFT, D180, 0, 0, LEFT)
+			satlib.sat_part_last()
+		elseif(dx > 0) then
+			for i=1, dx do
+				satlib.sat_part_add("base", 0, 0, LEFT, D0, 0, 0, RIGHT)
+			end
+
+			satlib.sat_part_add("solar", 0, 0, LEFT, D0, 0, 0, RIGHT)
+			satlib.sat_part_last()
+		end
+	else
+		if(dy < 0) then
+			for i=1, -dy do
+				satlib.sat_part_add("base", 0, 0, BOTTOM, D0, 0, 0, TOP)
+			end
+
+			satlib.sat_part_add("solar", 0, 0, LEFT, D270, 0, 0, TOP)
+			satlib.sat_part_last()
+		elseif(dy > 0) then
+			for i=1, dy do
+				satlib.sat_part_add("base", 0, 0, TOP, D0, 0, 0, BOTTOM)
+			end
+
+			satlib.sat_part_add("solar", 0, 0, LEFT, D90, 0, 0, BOTTOM)
+			satlib.sat_part_last()
+		end
+	end
+end
+
+function HilbertA(level, g, d)
+  if level > depth then
+    HilbertB(level-1,g,d);
+    lineSat(0,d);
+    HilbertA(level-1,g,d);
+    lineSat(d,0);
+    HilbertA(level-1,g,d);
+    lineSat(0,-d);
+    HilbertC(level-1,g,d);
+  end
+end
+
+function HilbertB(level, g, d)
+  if level > depth then
+    HilbertA(level-1,g,d);
+    lineSat(d,0);
+    HilbertB(level-1,g,d);
+    lineSat(0,d);
+    HilbertB(level-1,g,d);
+    lineSat(-d,0);
+    HilbertD(level-1,g,d);
+  end
+end
+
+function HilbertC(level, g, d)
+  if level > depth then
+    HilbertD(level-1,g,d);
+    lineSat(-d,0);
+    HilbertC(level-1,g,d);
+    lineSat(0,-d);
+    HilbertC(level-1,g,d);
+    lineSat(d,0);
+    HilbertA(level-1,g,d);
+  end
+end
+
+function HilbertD(level, g, d)
+  if level > depth then
+    HilbertC(level-1,g,d);
+    lineSat(0,-d);
+    HilbertD(level-1,g,d);
+    lineSat(-d,0);
+    HilbertD(level-1,g,d);
+    lineSat(0,d);
+    HilbertB(level-1,g,d);
+  end
+end
+
+depth = 6
+level = 9
+dist0 = 4096
+dist = dist0
+for i=0, level do
+	dist = dist / 2;
+	print(dist)
+end
+HilbertA(level, sg, dist); -- start recursion
+
+-- staircase()
+-- fractal(4)
 
 --[[
 sat_new("test", {

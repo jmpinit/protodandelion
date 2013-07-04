@@ -17,24 +17,6 @@
 Node* sat_partinfos;
 Node* satellites;
 
-bool connection_is_valid(Connection* conn) {
-	bool valid = true;
-
-	// check for compatible directions
-	Dir dc = conn->child->direction;
-	Dir dp = conn->parent->direction;
-
-	if(dc == UP && dp == DOWN) {
-	} else if(dc == DOWN && dp == UP) {
-	} else if(dc == LEFT && dp == RIGHT) {
-	} else if(dc == RIGHT && dp == LEFT) {
-	} else {
-		valid = false;
-	}
-
-	return valid;
-}
-
 SatPart* sat_part_add(Satellite* sat, SatPartInfo* type, SatPart* parent, Rot rot, Connector* connParent, Connector* connChild) {
 	// create the part
 	SatPart* part = calloc(1, sizeof(SatPart));
@@ -121,8 +103,11 @@ void sat_init(lua_State* L) {
 
 	if ( s==0 ) {
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);
-		if(s) fprintf(stderr, "Lua error: %s\n", lua_tostring(L, -1));
-		printf("Called script.");
+		if(s) {
+		   	fprintf(stderr, "Lua error: %s\n", lua_tostring(L, -1));
+			exit(0);
+		}
+		printf("initialized\n");
 	} else {
 		fprintf(stderr, "Lua load error: %s\n", lua_tostring(L, -1));
 		exit(0);
