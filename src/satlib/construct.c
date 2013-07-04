@@ -150,6 +150,10 @@ int satlib_sat_part_add(lua_State *L) {
 
 		// create the new part
 		SatPartInfo* info = info_by_name((char*)partName);
+
+		if(info == NULL)
+			return luaL_error(L, "%s: the part type \"%s\" does not exist.", __func__, partName);
+
 		Connector* connParent = connector_by_sig(currentPart->info, px, py, pdir);
 		Connector* connChild = connector_by_sig(info, cx, cy, cdir);
 
