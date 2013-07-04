@@ -119,6 +119,7 @@ part_new("solar", {
 part_new("wide dish", "dish_wide", {
 	{ x = 0, y = 1, dir = LEFT }
 })
+part_new("short dish", "dish_short", conn_one)
 
 print("parts loaded.")
 
@@ -147,14 +148,14 @@ function lineSat(dx, dy)
 				satlib.sat_part_add("base", 0, 0, RIGHT, D0, 0, 0, LEFT)
 			end
 
-			satlib.sat_part_add("wide dish", 0, 1, LEFT, D180, 0, 0, LEFT)
+			satlib.sat_part_add("short dish", 0, 0, LEFT, D180, 0, 0, LEFT)
 			satlib.sat_part_last()
 		elseif(dx > 0) then
 			for i=1, dx do
 				satlib.sat_part_add("base", 0, 0, LEFT, D0, 0, 0, RIGHT)
 			end
 
-			satlib.sat_part_add("wide dish", 0, 1, LEFT, D0, 0, 0, RIGHT)
+			satlib.sat_part_add("short dish", 0, 0, LEFT, D0, 0, 0, RIGHT)
 			satlib.sat_part_last()
 		end
 	else
@@ -163,14 +164,14 @@ function lineSat(dx, dy)
 				satlib.sat_part_add("base", 0, 0, BOTTOM, D0, 0, 0, TOP)
 			end
 
-			satlib.sat_part_add("wide dish", 0, 1, LEFT, D270, 0, 0, TOP)
+			satlib.sat_part_add("short dish", 0, 0, LEFT, D270, 0, 0, TOP)
 			satlib.sat_part_last()
 		elseif(dy > 0) then
 			for i=1, dy do
 				satlib.sat_part_add("base", 0, 0, TOP, D0, 0, 0, BOTTOM)
 			end
 
-			satlib.sat_part_add("wide dish", 0, 1, LEFT, D90, 0, 0, BOTTOM)
+			satlib.sat_part_add("short dish", 0, 0, LEFT, D90, 0, 0, BOTTOM)
 			satlib.sat_part_last()
 		end
 	end
