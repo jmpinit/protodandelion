@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #include "SDL/SDL.h"
+#include "SDL/SDL_image.h"
 
 #include <lua.h>
 #include <lauxlib.h>
@@ -58,13 +59,13 @@ int satlib_part_type_add_sprite(lua_State *L) {
 			return luaL_error(L, "%s: no part named %s.", __func__, name);
 
 		// load the image
-		SDL_Surface* temp = SDL_LoadBMP(filename);
+		SDL_Surface* temp = IMG_Load(filename);
 		if (temp == NULL) {
-			printf("Unable to load bitmap: %s\n", SDL_GetError());
-			return luaL_error(L, "%s: unable to load bitmap %s.", __func__, filename);
+			//printf("Unable to load image: %s\n", IMG_GetError()());
+			return luaL_error(L, "%s: unable to load image %s.", __func__, filename);
 		}
 
-		partinfo->sprites[rot] = SDL_DisplayFormat(temp);
+		partinfo->sprites[rot] = SDL_DisplayFormatAlpha(temp);
 		SDL_FreeSurface(temp);
 
 		// the unrotated sprite determines the width and height

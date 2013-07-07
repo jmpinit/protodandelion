@@ -37,7 +37,7 @@ function part_new(arg1, arg2, arg3)
 	end
 
 	-- SPRITE FILENAMES
-	if(satlib.file_exists(filestub .. ".bmp") == true) then
+	if(satlib.file_exists(filestub .. ".png") == true) then
 		-- only one
 		spritefiles = {
 			filestub,
@@ -60,7 +60,7 @@ function part_new(arg1, arg2, arg3)
 
 	-- SPRITES
 	for rotation, filename in pairs(spritefiles) do
-		satlib.part_type_add_sprite(name, filename..".bmp", rotation-1)
+		satlib.part_type_add_sprite(name, filename..".png", rotation-1)
 	end
 
 	-- CONNECTIONS
@@ -127,6 +127,22 @@ print("parts loaded.")
 
 satlib.sat_new("test", 25, 15)
 satlib.sat_select("test")
+
+function simple()
+	-- solar panels
+	satlib.sat_part_add("solar", 0, 0, LEFT, D0, 0, 0, RIGHT)
+	satlib.sat_part_last()
+	satlib.sat_part_add("solar", 0, 0, LEFT, D180, 0, 0, LEFT)
+	satlib.sat_part_last()
+
+	-- antennae
+	satlib.sat_part_add("base", 0, 0, TOP, D0, 0, 0, BOTTOM)
+	satlib.sat_part_add("base", 0, 0, TOP, D0, 0, 0, BOTTOM)
+	satlib.sat_part_add("short dish", 0, 0, LEFT, D90, 0, 0, BOTTOM)
+
+	satlib.sat_part_last()
+	satlib.sat_part_add("wide dish", 0, 1, LEFT, D0, 0, 0, RIGHT)
+end
 
 function staircase()
 	for i=1, 10 do
@@ -225,6 +241,7 @@ function HilbertD(level, g, d)
   end
 end
 
+--[[
 depth = 6
 level = 9
 dist0 = 4096
@@ -234,9 +251,11 @@ for i=0, level do
 	print(dist)
 end
 HilbertA(level, sg, dist); -- start recursion
+--]]
 
 -- staircase()
 -- fractal(4)
+simple()
 
 --[[
 sat_new("test", {
