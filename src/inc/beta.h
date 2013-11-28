@@ -51,7 +51,7 @@ typedef struct Beta {
 Beta*		beta_create(int memsize);
 void		beta_tick(Beta*);
 uint32_t	beta_read_reg(Beta*, uint8_t index);
-void		beta_write_reg(Beta*, uint8_t index, uint32_t value);
+void		beta_write_reg(Beta*, uint32_t value, uint8_t index);
 
 // control
 void		beta_load(Beta*, const char* filename);
