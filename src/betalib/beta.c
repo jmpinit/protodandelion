@@ -75,7 +75,7 @@ void beta_write_mem(Beta* beta, uint32_t value, uint32_t addr) {
 
 void beta_tick(Beta* beta) {
 	// get next instruction
-	uint32_t instruction = beta_read_mem(beta, beta->pc);
+	uint32_t instruction = beta_read_mem(beta, beta->pc & ~(1 << 31));
 
 	// decode instruction fields
 	uint8_t opcode		= instruction >> 26;
@@ -130,7 +130,8 @@ void beta_tick(Beta* beta) {
 		case DIVC:	beta_write_reg(beta, val_a / literal, reg_c);	break;
 		case JMP:
 			beta_write_reg(beta, beta->pc+4, reg_c);
-			ea = val_a & 0xFFFFFFFC;
+			ea = (val_a & 0xFFFFFFFC) - 4;
+			if(!(beta->pc & (1<<31)) && (ea & (1<<31))) ea &= 0x3FFFFFFF;
 			beta->pc = ea;
 			break;
 		case LD:
@@ -138,7 +139,7 @@ void beta_tick(Beta* beta) {
 			beta_write_reg(beta, beta_read_mem(beta, ea), reg_c);
 			break;
 		case LDR:
-			ea = beta->pc + ((int32_t)literal) * 4;
+			ea = (beta->pc & ~(1 << 31)) + ((int32_t)literal) * 4;
 			beta_write_reg(beta, beta_read_mem(beta, ea), reg_c);
 			break;
 		case MUL:	beta_write_reg(beta, val_a * val_b, reg_c);		break;
