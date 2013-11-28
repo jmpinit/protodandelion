@@ -61,10 +61,10 @@ void beta_tick(Beta* beta) {
 	uint32_t instruction = beta->memory[beta->pc/4];
 
 	// decode instruction fields
-	uint8_t opcode		= instruction & 0xFC000000;
-	uint8_t reg_c		= instruction & 0x03E00000;
-	uint8_t reg_a		= instruction & 0x001F0000;
-	uint8_t reg_b		= instruction & 0x0000F800;
+	uint8_t opcode		= instruction >> 26;
+	uint8_t reg_c		= (instruction >> (26-5)) & 0x1F;
+	uint8_t reg_a		= (instruction >> (26-10)) & 0x1F;
+	uint8_t reg_b		= (instruction >> (26-15)) & 0x1F;
 	int16_t literal		= instruction & 0xFFFF;
 
 	// get data
