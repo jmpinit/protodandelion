@@ -19,11 +19,12 @@ SOURCES =	main.c \
 			satlib$(S)initialize.c \
 			satlib$(S)construct.c \
 			satlib$(S)utility.c \
+			betalib$(S)beta.c \
 			
 INCLUDES = -Isrc$(S)inc -I/usr/local/include -I/usr/include/lua5.1
 OBJECTS = $(patsubst %,$(OBJDIR)$(S)%,$(SOURCES:.c=.o))
 
-CFLAGS := -Wall -pedantic -std=c99 -g -O0 -gstabs
+CFLAGS := -Wall -pedantic -std=gnu99 -g -O0 -gstabs
 LFLAGS = `sdl-config --libs` -lSDL -L/usr/local/lib -llua5.1 -lSDL_image
 CC := gcc
 
