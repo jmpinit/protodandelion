@@ -95,14 +95,18 @@ void beta_tick(Beta* beta) {
 		case CMPEQC:
 			beta_write_reg(beta, (val_a == literal)? 1: 0, reg_c);
 			break;
-		case CMPLE: break;
+		case CMPLE:
 			beta_write_reg(beta, (val_a <= val_b)? 1: 0, reg_c);
+			break;
 		case CMPLEC: break;
 			beta_write_reg(beta, (val_a <= literal)? 1: 0, reg_c);
-		case CMPLT: break;
+			break;
+		case CMPLT:
 			beta_write_reg(beta, (val_a < val_b)? 1: 0, reg_c);
-		case CMPLTC: break;
-			beta_write_reg(beta, (val_a < literal)? 1: 0, reg_c);
+			break;
+		case CMPLTC:
+			beta_write_reg(beta, (val_a < (int32_t)literal)? 1: 0, reg_c);
+			break;
 		case DIV:	beta_write_reg(beta, val_a / val_b, reg_c);		break;
 		case DIVC:	beta_write_reg(beta, val_a / literal, reg_c);	break;
 		case JMP:
