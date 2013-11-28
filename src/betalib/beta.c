@@ -1,12 +1,43 @@
-#include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdint.h>
 
 #include "beta.h"
+
+void beta_load(Beta* beta, const char* filename) {
+	FILE *fp = fopen(filename, "rb");
+	int size_loaded = fread(beta->memory, sizeof(uint32_t), beta->memsize, fp);
+
+	if(size_loaded > beta->memsize) {
+		printf("beta_load: expected %d u32s but got %d (too much).\n", beta->memsize, size_loaded);
+		exit(1);
+	} else {
+		printf("loaded %d u32s into beta.\n", size_loaded);
+	}
+}
+
+void beta_dump_info(Beta* beta) {
+	printf("PC = %d (%x)\n", beta->pc, beta->pc);
+}
+
+void beta_dump_registers(Beta* beta) {
+	for(int i=0; i < 31; i++) {
+		printf("R%d\t= %x\n", i, beta->registers[i]);
+	}
+}
+
+void beta_dump_memory(Beta* beta) {
+	for(int i=0; i < beta->memsize; i++)
+		printf("%x) %x\n", i, beta->memory[i]);
+}
 
 Beta* beta_create(int memsize) {
 	Beta* newbeta = calloc(1, sizeof(Beta));
 	uint32_t* memory = calloc(memsize, sizeof(uint32_t));
+
+	newbeta->memsize = memsize;
 	newbeta->memory = memory;
+
 	return newbeta;
 }
 

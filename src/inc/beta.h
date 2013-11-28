@@ -41,12 +41,21 @@ typedef enum {
 } Instruction;
 
 typedef struct Beta {
+	unsigned int memsize;
 	uint32_t* memory;
 	uint32_t pc;
 	uint32_t registers[31];
 } Beta;
 
+// simulation
 Beta*		beta_create(int memsize);
 void		beta_tick(Beta*);
 uint32_t	beta_read_reg(Beta*, uint8_t index);
 void		beta_write_reg(Beta*, uint8_t index, uint32_t value);
+
+// control
+void		beta_load(Beta*, const char* filename);
+
+// debug
+void		beta_dump_info(Beta*);
+void		beta_dump_registers(Beta*);

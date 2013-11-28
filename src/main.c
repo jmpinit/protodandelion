@@ -71,6 +71,19 @@ int main() {
 
 	// do beta setup FIXME
 	Beta* beta = beta_create(1024);
+	beta_load(beta, "test.bin");
+
+	// 280 cycle test using lab6.uasm
+	for(int i=0; i < 300; i++) {
+		beta_tick(beta);
+	}
+
+	beta_dump_info(beta);
+	printf("========\n");
+	beta_dump_registers(beta);
+	printf("========\n");
+	beta_dump_memory(beta);
+	printf("========\n");
 
 	SDL_init();
 	sat_init(lstate);
