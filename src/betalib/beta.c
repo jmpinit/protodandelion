@@ -139,7 +139,7 @@ void beta_tick(Beta* beta) {
 			beta_write_reg(beta, beta_read_mem(beta, ea), reg_c);
 			break;
 		case LDR:
-			ea = (beta->pc & ~(1 << 31)) + ((int32_t)literal) * 4;
+			ea = ((beta->pc + 4) & ~(1 << 31)) + ((int32_t)literal) * 4;
 			beta_write_reg(beta, beta_read_mem(beta, ea), reg_c);
 			break;
 		case MUL:	beta_write_reg(beta, val_a * val_b, reg_c);		break;
