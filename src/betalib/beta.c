@@ -11,11 +11,13 @@ Beta* beta_create(int memsize) {
 }
 
 uint32_t beta_read_reg(Beta* beta, uint8_t index) {
-	return 0;
+	index &= 0x1F;	// register indices are 5 bits
+	return beta->registers[index];
 }
 
 void beta_write_reg(Beta* beta, uint8_t index, uint32_t value) {
-
+	index &= 0x1F;	// register indices are 5 bits
+	beta->registers[index] = value;
 }
 
 void beta_tick(Beta* beta) {
