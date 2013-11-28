@@ -25,11 +25,11 @@ void beta_tick(Beta* beta) {
 	uint32_t instruction = beta->memory[beta->pc];
 
 	// decode instruction fields
-	uint8_t opcode	= instruction & 0xFC000000;
-	uint8_t reg_c	= instruction & 0x03E00000;
-	uint8_t reg_a	= instruction & 0x001F0000;
-	uint8_t reg_b	= instruction & 0x0000F800;
-	uint8_t literal	= instruction & 0xFFFF;
+	uint8_t opcode		= instruction & 0xFC000000;
+	uint8_t reg_c		= instruction & 0x03E00000;
+	uint8_t reg_a		= instruction & 0x001F0000;
+	uint8_t reg_b		= instruction & 0x0000F800;
+	int16_t literal		= instruction & 0xFFFF;
 
 	// get data
 	uint32_t val_c	= beta_read_reg(beta, reg_c);
@@ -37,24 +37,51 @@ void beta_tick(Beta* beta) {
 	uint32_t val_b	= beta_read_reg(beta, reg_b);
 
 	// execute instruction
-	uint32_t res;
+	uint32_t res, ea;
 	switch(opcode) {
 		case ADD:	beta_write_reg(beta, val_a + val_b, reg_c);		break;
 		case ADDC:	beta_write_reg(beta, val_a + literal, reg_c);	break;
 		case AND:	beta_write_reg(beta, val_a & val_b, reg_c);		break;
 		case ANDC:	beta_write_reg(beta, val_a & literal, reg_c);	break;
-		case BEQ:	break;
-		case CMPEQ:	break;
-		case CMPEQC:break;
+		case BEQ:
+			beta_write_reg(beta, beta->pc+4, reg_c);
+			ea = beta->pc + ((int32_t)literal) * 4;
+			if(val_a == 0) beta->pc = ea;
+			break;
+		case BNE:
+			beta_write_reg(beta, beta->pc+4, reg_c);
+			ea = beta->pc + ((int32_t)literal) * 4;
+			if(val_a != 0) beta->pc = ea;
+			break;
+		case CMPEQ:
+			beta_write_reg(beta, (val_a == val_b)? 1: 0, reg_c);
+			break;
+		case CMPEQC:
+			beta_write_reg(beta, (val_a == literal)? 1: 0, reg_c);
+			break;
 		case CMPLE: break;
+			beta_write_reg(beta, (val_a <= val_b)? 1: 0, reg_c);
 		case CMPLEC: break;
+			beta_write_reg(beta, (val_a <= literal)? 1: 0, reg_c);
 		case CMPLT: break;
+			beta_write_reg(beta, (val_a < val_b)? 1: 0, reg_c);
 		case CMPLTC: break;
+			beta_write_reg(beta, (val_a < literal)? 1: 0, reg_c);
 		case DIV:	beta_write_reg(beta, val_a / val_b, reg_c);		break;
 		case DIVC:	beta_write_reg(beta, val_a / literal, reg_c);	break;
-		case JMP:	break;
-		case LD: break;
-		case LDR: break;
+		case JMP:
+			beta_write_reg(beta, beta->pc+4, reg_c);
+			ea = val_a & 0xFFFFFFFC;
+			beta->pc = ea;
+			break;
+		case LD:
+			ea = val_a + (int32_t)literal;
+			beta_write_reg(beta, beta->memory[ea], reg_c);
+			break;
+		case LDR:
+			ea = beta->pc + ((int32_t)literal) * 4;
+			beta_write_reg(beta, beta->memory[ea], reg_c);
+			break;
 		case MUL:	beta_write_reg(beta, val_a * val_b, reg_c);		break;
 		case MULC:	beta_write_reg(beta, val_a * literal, reg_c);	break;
 		case OR:	beta_write_reg(beta, val_a | val_b, reg_c);		break;
@@ -83,7 +110,10 @@ void beta_tick(Beta* beta) {
 			break;
 		case SUB:	beta_write_reg(beta, val_a - val_b, reg_c);			break;
 		case SUBC:	beta_write_reg(beta, val_a - literal, reg_c);		break;
-		case ST: break;
+		case ST:
+			ea = val_a + (int32_t)literal;
+			beta->memory[ea] = val_c;
+			break;
 		case XOR:	beta_write_reg(beta, val_a ^ val_b, reg_c);			break;
 		case XORC:	beta_write_reg(beta, val_a ^ literal, reg_c);		break;
 		case XNOR:	beta_write_reg(beta, ~(val_a ^ val_b), reg_c);		break;
