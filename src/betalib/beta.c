@@ -43,12 +43,17 @@ Beta* beta_create(int memsize) {
 
 uint32_t beta_read_reg(Beta* beta, uint8_t index) {
 	index &= 0x1F;	// register indices are 5 bits
-	return beta->registers[index];
+
+	if(index == 31)
+		return 0;
+	else
+		return beta->registers[index];
 }
 
-void beta_write_reg(Beta* beta, uint8_t index, uint32_t value) {
+void beta_write_reg(Beta* beta, uint32_t value, uint8_t index) {
+	printf("R%d = 0x%x\n", index, value);
 	index &= 0x1F;	// register indices are 5 bits
-	beta->registers[index] = value;
+	if(index != 31) beta->registers[index] = value;
 }
 
 void beta_tick(Beta* beta) {
