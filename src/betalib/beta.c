@@ -56,9 +56,26 @@ void beta_write_reg(Beta* beta, uint32_t value, uint8_t index) {
 	if(index != 31) beta->registers[index] = value;
 }
 
+uint32_t beta_read_mem(Beta* beta, uint32_t addr) {
+	addr >>= 2;
+
+	if(addr < beta->memsize)
+		return beta->memory[addr];
+	else
+		printf("read: %x out of bounds\n", addr);
+	return 0;
+}
+
+void beta_write_mem(Beta* beta, uint32_t value, uint32_t addr) {
+	if(addr < beta->memsize)
+		beta->memory[addr] = value;
+	else
+		printf("write: %x out of bounds\n", addr);
+}
+
 void beta_tick(Beta* beta) {
 	// get next instruction
-	uint32_t instruction = beta->memory[beta->pc/4];
+	uint32_t instruction = beta_read_mem(beta, beta->pc);
 
 	// decode instruction fields
 	uint8_t opcode		= instruction >> 26;
@@ -118,11 +135,11 @@ void beta_tick(Beta* beta) {
 			break;
 		case LD:
 			ea = val_a + (int32_t)literal;
-			beta_write_reg(beta, beta->memory[ea >> 2], reg_c);
+			beta_write_reg(beta, beta_read_mem(beta, ea), reg_c);
 			break;
 		case LDR:
 			ea = beta->pc + ((int32_t)literal) * 4;
-			beta_write_reg(beta, beta->memory[ea >> 2], reg_c);
+			beta_write_reg(beta, beta_read_mem(beta, ea), reg_c);
 			break;
 		case MUL:	beta_write_reg(beta, val_a * val_b, reg_c);		break;
 		case MULC:	beta_write_reg(beta, val_a * literal, reg_c);	break;
@@ -154,7 +171,7 @@ void beta_tick(Beta* beta) {
 		case SUBC:	beta_write_reg(beta, val_a - literal, reg_c);		break;
 		case ST:
 			ea = val_a + (int32_t)literal;
-			beta->memory[ea >> 2] = val_c;
+			beta_write_mem(beta, val_c, ea);
 			break;
 		case XOR:	beta_write_reg(beta, val_a ^ val_b, reg_c);			break;
 		case XORC:	beta_write_reg(beta, val_a ^ literal, reg_c);		break;
