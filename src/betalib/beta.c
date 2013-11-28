@@ -58,7 +58,7 @@ void beta_write_reg(Beta* beta, uint32_t value, uint8_t index) {
 
 void beta_tick(Beta* beta) {
 	// get next instruction
-	uint32_t instruction = beta->memory[beta->pc];
+	uint32_t instruction = beta->memory[beta->pc/4];
 
 	// decode instruction fields
 	uint8_t opcode		= instruction & 0xFC000000;
@@ -112,11 +112,11 @@ void beta_tick(Beta* beta) {
 			break;
 		case LD:
 			ea = val_a + (int32_t)literal;
-			beta_write_reg(beta, beta->memory[ea], reg_c);
+			beta_write_reg(beta, beta->memory[ea >> 2], reg_c);
 			break;
 		case LDR:
 			ea = beta->pc + ((int32_t)literal) * 4;
-			beta_write_reg(beta, beta->memory[ea], reg_c);
+			beta_write_reg(beta, beta->memory[ea >> 2], reg_c);
 			break;
 		case MUL:	beta_write_reg(beta, val_a * val_b, reg_c);		break;
 		case MULC:	beta_write_reg(beta, val_a * literal, reg_c);	break;
@@ -148,7 +148,7 @@ void beta_tick(Beta* beta) {
 		case SUBC:	beta_write_reg(beta, val_a - literal, reg_c);		break;
 		case ST:
 			ea = val_a + (int32_t)literal;
-			beta->memory[ea] = val_c;
+			beta->memory[ea >> 2] = val_c;
 			break;
 		case XOR:	beta_write_reg(beta, val_a ^ val_b, reg_c);			break;
 		case XORC:	beta_write_reg(beta, val_a ^ literal, reg_c);		break;
