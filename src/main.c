@@ -76,13 +76,15 @@ int main() {
 	// 280 cycle test using lab6.uasm
 	for(int i=0; i < 300; i++) {
 		beta_tick(beta);
+		if(beta->pc == 0xC) {
+			printf("failed with error code %d.\n", beta->registers[0]);
+			exit(1);
+		}
 	}
 
 	beta_dump_info(beta);
 	printf("========\n");
 	beta_dump_registers(beta);
-	printf("========\n");
-	beta_dump_memory(beta);
 	printf("========\n");
 
 	SDL_init();
