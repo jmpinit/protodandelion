@@ -40,9 +40,9 @@ void beta_tick(Beta* beta) {
 	uint32_t res;
 	switch(opcode) {
 		case ADD:	beta_write_reg(beta, val_a + val_b, reg_c);		break;
-		case ADDC:	beta_write_reg(beta, val_a + literal, reg_c);		break;
+		case ADDC:	beta_write_reg(beta, val_a + literal, reg_c);	break;
 		case AND:	beta_write_reg(beta, val_a & val_b, reg_c);		break;
-		case ANDC:	beta_write_reg(beta, val_a & literal, reg_c);		break;
+		case ANDC:	beta_write_reg(beta, val_a & literal, reg_c);	break;
 		case BEQ:	break;
 		case CMPEQ:	break;
 		case CMPEQC:break;
@@ -51,17 +51,17 @@ void beta_tick(Beta* beta) {
 		case CMPLT: break;
 		case CMPLTC: break;
 		case DIV:	beta_write_reg(beta, val_a / val_b, reg_c);		break;
-		case DIVC:	beta_write_reg(beta, val_a / literal, reg_c);		break;
+		case DIVC:	beta_write_reg(beta, val_a / literal, reg_c);	break;
 		case JMP:	break;
 		case LD: break;
 		case LDR: break;
 		case MUL:	beta_write_reg(beta, val_a * val_b, reg_c);		break;
-		case MULC:	beta_write_reg(beta, val_a * literal, reg_c);		break;
+		case MULC:	beta_write_reg(beta, val_a * literal, reg_c);	break;
 		case OR:	beta_write_reg(beta, val_a | val_b, reg_c);		break;
-		case ORC:	beta_write_reg(beta, val_a | literal, reg_c);		break;
-		case SHL:	beta_write_reg(beta, val_a << val_b, reg_c);		break;
+		case ORC:	beta_write_reg(beta, val_a | literal, reg_c);	break;
+		case SHL:	beta_write_reg(beta, val_a << val_b, reg_c);	break;
 		case SHLC:	beta_write_reg(beta, val_a << literal, reg_c);	break;
-		case SHR:	beta_write_reg(beta, val_a >> val_b, reg_c);		break;
+		case SHR:	beta_write_reg(beta, val_a >> val_b, reg_c);	break;
 		case SHRC:	beta_write_reg(beta, val_a >> literal, reg_c);	break;
 		case SRA:
 			res = val_a >> val_b;
@@ -81,13 +81,16 @@ void beta_tick(Beta* beta) {
 			beta_write_reg(beta, res, reg_c);
 
 			break;
-		case SUB:	beta_write_reg(beta, val_a - val_b, reg_c);		break;
+		case SUB:	beta_write_reg(beta, val_a - val_b, reg_c);			break;
 		case SUBC:	beta_write_reg(beta, val_a - literal, reg_c);		break;
 		case ST: break;
-		case XOR:	beta_write_reg(beta, val_a ^ val_b, reg_c);		break;
+		case XOR:	beta_write_reg(beta, val_a ^ val_b, reg_c);			break;
 		case XORC:	beta_write_reg(beta, val_a ^ literal, reg_c);		break;
 		case XNOR:	beta_write_reg(beta, ~(val_a ^ val_b), reg_c);		break;
 		case XNORC: beta_write_reg(beta, ~(val_a ^ literal), reg_c);	break;
 		default: break;
 	}
+
+	// move on
+	beta->pc += 4;
 }
