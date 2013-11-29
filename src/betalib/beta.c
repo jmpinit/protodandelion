@@ -67,6 +67,8 @@ uint32_t beta_read_mem(Beta* beta, uint32_t addr) {
 }
 
 void beta_write_mem(Beta* beta, uint32_t value, uint32_t addr) {
+	addr >>= 2;
+
 	if(addr < beta->memsize)
 		beta->memory[addr] = value;
 	else
