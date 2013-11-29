@@ -1,3 +1,6 @@
+#ifndef BETA_H
+#define BETA_H
+
 #include <stdint.h>
 
 #define REG_XP		30
@@ -60,3 +63,5 @@ void		beta_load(Beta*, const char* filename);
 // debug
 void		beta_dump_info(Beta*);
 void		beta_dump_registers(Beta*);
+
+#endif
