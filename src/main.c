@@ -12,6 +12,7 @@
 
 #include "sat.h"
 #include "beta.h"
+#include "term.h"
 #include "list.h"
 
 lua_State* lstate;
@@ -91,15 +92,36 @@ int main() {
 	beta_dump_registers(beta);
 	printf("========\n");
 
+	// create a terminal
+	Terminal* terminal = term_init(640/11, 480/13, "res/font.png");
+	term_puts(terminal, "hello world!");
+
 	SDL_init();
 	sat_init(lstate);
+
+	while(true) {
+		term_render(terminal, screen);
+		SDL_Flip(screen);
+
+		SDL_Event event;
+
+		while(SDL_PollEvent(&event)) {
+			switch (event.type) {
+				case SDL_QUIT:
+					exit(0);
+					break;
+			}
+		}
+
+		SDL_Delay(32);
+	}
 
 	while(true) {
 		Node* rootsatnode = satellites;
 		Satellite* rootsat = (Satellite*)rootsatnode->data;
 
 		if(rootsat != NULL) {
-			sat_render(rootsat, screen);
+			//sat_render(rootsat, screen);
 
 			SDL_Flip(screen);
 		}
@@ -122,8 +144,7 @@ int main() {
 							break;
 						case SDLK_DOWN:
 							break;
-						case SDLK_ESCAPE:
-							exit(0);
+						case SDLK_ESCAPE: exit(0);
 							break;
 
 						default:

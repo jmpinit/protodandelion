@@ -20,6 +20,7 @@ SOURCES =	main.c \
 			satlib$(S)construct.c \
 			satlib$(S)utility.c \
 			betalib$(S)beta.c \
+			termlib$(S)term.c \
 			
 INCLUDES = -Isrc$(S)inc -I/usr/local/include -I/usr/include/lua5.1
 OBJECTS = $(patsubst %,$(OBJDIR)$(S)%,$(SOURCES:.c=.o))
