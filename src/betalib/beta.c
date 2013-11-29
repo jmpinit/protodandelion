@@ -86,7 +86,10 @@ void beta_tick(Beta* beta) {
 	uint8_t reg_b		= (instruction >> (26-15)) & 0x1F;
 	int16_t literal		= instruction & 0xFFFF;
 
-	printf("[%d (%x)]\t%x\t%d, %d, %d / %d\n", beta->pc, beta->pc, opcode, reg_a, reg_b, reg_c, literal);
+	if(beta->pc & (1<<31))
+		printf("SUPER [%d (%x)]\t%x\t%d, %d, %d / %d\n", beta->pc & ~(1<<31), beta->pc & ~(1<<31), opcode, reg_a, reg_b, reg_c, literal);
+	else
+		printf("user  [%d (%x)]\t%x\t%d, %d, %d / %d\n", beta->pc & ~(1<<31), beta->pc & ~(1<<31), opcode, reg_a, reg_b, reg_c, literal);
 
 	// get data
 	uint32_t val_c	= beta_read_reg(beta, reg_c);
@@ -180,7 +183,11 @@ void beta_tick(Beta* beta) {
 		case XORC:	beta_write_reg(beta, val_a ^ literal, reg_c);		break;
 		case XNOR:	beta_write_reg(beta, ~(val_a ^ val_b), reg_c);		break;
 		case XNORC: beta_write_reg(beta, ~(val_a ^ literal), reg_c);	break;
-		default: break;
+
+		default: // illegal operation
+			beta_write_reg(beta, beta->pc + 4, REG_XP);
+			beta->pc = 0 | (1 << 31);
+			break;
 	}
 
 	// move on
