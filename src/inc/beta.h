@@ -50,6 +50,7 @@ typedef struct Beta {
 // simulation
 Beta*		beta_create(int memsize);
 void		beta_tick(Beta*);
+void		beta_interrupt(Beta*);
 uint32_t	beta_read_reg(Beta*, uint8_t index);
 void		beta_write_reg(Beta*, uint32_t value, uint8_t index);
 

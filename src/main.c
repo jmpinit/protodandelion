@@ -75,7 +75,11 @@ int main() {
 
 	// 280 cycle test using lab6.uasm
 	for(int i=0; i < 300; i++) {
-		beta_tick(beta);
+		if(i == 264)
+			beta_interrupt(beta);
+		else
+			beta_tick(beta);
+
 		if(beta->pc == 0xC) {
 			printf("failed with error code %d.\n", beta->registers[0]);
 			exit(1);

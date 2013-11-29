@@ -75,6 +75,12 @@ void beta_write_mem(Beta* beta, uint32_t value, uint32_t addr) {
 		printf("write: %x out of bounds\n", addr);
 }
 
+void beta_interrupt(Beta* beta) {
+	beta_write_reg(beta, beta->pc + 4, REG_XP);
+	beta->pc = 4 | (1 << 31);
+	beta_tick(beta);
+}
+
 void beta_tick(Beta* beta) {
 	// get next instruction
 	uint32_t instruction = beta_read_mem(beta, beta->pc & ~(1 << 31));
