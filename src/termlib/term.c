@@ -53,8 +53,17 @@ void term_next(Terminal* t) {
 }
 
 void term_putc(Terminal* t, char c) {
-	t->text[t->y*t->width+t->x] = c;
-	term_next(t);
+	switch(c) {
+		case '\n':
+			t->y++;
+			break;
+		case '\r':
+			t->x = 0;
+			break;
+		default:
+			t->text[t->y*t->width+t->x] = c;
+			term_next(t);
+	}
 }
 
 void term_puts(Terminal* t, const char* str) {
