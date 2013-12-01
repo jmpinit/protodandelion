@@ -24,9 +24,11 @@ Terminal* term_init(unsigned int w, unsigned int h, const char* fn) {
 }
 
 void term_clear(Terminal* t) {
-	for(int y=0; y < t->height; y++)
-		for(int x=0; x < t->width; x++)
-			t->text[y*t->width+x] = ' ';
+	t->x = 0;
+	t->y = 0;
+
+	for(int i=0; i < t->width*t->height; i++)
+		t->text[i] = ' ';
 }
 
 void term_move(Terminal* t, unsigned int x, unsigned int y) {
