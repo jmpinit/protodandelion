@@ -15,7 +15,7 @@
 
 // LIBRARY INITIALIZATION
 
-static const luaL_reg satlib[] = {
+static const luaL_Reg satlib[] = {
 	// initilializers
 	{ "part_type_new",				satlib_part_type_new },
 	{ "part_type_add_sprite",		satlib_part_type_add_sprite },
@@ -40,14 +40,14 @@ int luaopen_satlib(lua_State *L) {
 }
 
 void openlualibs(lua_State *l) {
-	static const luaL_reg lualibs[] =
+	static const luaL_Reg lualibs[] =
 	{
 		{ "base",       luaopen_base },
 		{ "satlib",		luaopen_satlib },
 		{ NULL,         NULL }
 	};
 
-	const luaL_reg *lib;
+	const luaL_Reg *lib;
 
 	for (lib = lualibs; lib->func != NULL; lib++) {
 		lib->func(l);

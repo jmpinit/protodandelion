@@ -22,11 +22,11 @@ SOURCES =	main.c \
 			betalib$(S)beta.c \
 			termlib$(S)term.c \
 			
-INCLUDES = -Isrc$(S)inc -I/usr/local/include -I/usr/include/lua5.1
+INCLUDES = -Isrc$(S)inc
 OBJECTS = $(patsubst %,$(OBJDIR)$(S)%,$(SOURCES:.c=.o))
 
-CFLAGS := -Wall -pedantic -std=gnu99 -g -O0 -gstabs
-LFLAGS = `sdl-config --libs` -lSDL -L/usr/local/lib -llua5.1 -lSDL_image
+CFLAGS := -Wall -pedantic -std=gnu99 -g -O0
+LFLAGS = `sdl-config --libs` -llua -lSDL_image
 CC := gcc
 
 all: $(PROG)

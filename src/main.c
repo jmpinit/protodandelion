@@ -68,8 +68,10 @@ void SDL_init() {
 }*/
 
 int main() {
-	lstate = lua_open();
+	lstate = luaL_newstate();
+  luaL_openlibs(lstate);
 
+  /*
 	// do beta setup FIXME
 	Beta* beta = beta_create(1024);
 	beta_load(beta, "test.bin");
@@ -91,6 +93,7 @@ int main() {
 	printf("========\n");
 	beta_dump_registers(beta);
 	printf("========\n");
+  */
 
 	// create a terminal
 	Terminal* terminal = term_init(640/11, 480/13, "res/font.png");
@@ -99,6 +102,7 @@ int main() {
 	SDL_init();
 	sat_init(lstate);
 
+  /*
 	while(true) {
 		term_render(terminal, screen);
 		SDL_Flip(screen);
@@ -115,6 +119,7 @@ int main() {
 
 		SDL_Delay(32);
 	}
+  */
 
 	while(true) {
 		Node* rootsatnode = satellites;
